@@ -1,0 +1,7 @@
+{
+  "name": "ShuchonaMart - Premium Bangladeshi E-commerce",
+  "description": "A high-performance, production-ready e-commerce platform featuring advanced search, admin dashboard, and full shopping lifecycle.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
