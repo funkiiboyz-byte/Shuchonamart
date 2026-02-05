@@ -7,15 +7,42 @@ import Category from '../models/Category';
 export const getProducts = async (req: any, res: any) => {
   const pageSize = 12;
   const page = Number(req.query.pageNumber) || 1;
-  const keyword = req.query.keyword ? {
-    name: {
-      $regex: req.query.keyword,
-      $options: 'i',
-    },
-  } : {};
+  const keyword = req.query.keyword
+    ? {
+        name: {
+          $regex: req.query.keyword,
+          $options: 'i',
+        },
+      }
+    : {};
+  const categoryFilter = req.query.category ? { category: req.query.category } : {};
+  const priceFilter: any = {};
+  if (req.query.minPrice) {
+    priceFilter.$gte = Number(req.query.minPrice);
+  }
+  if (req.query.maxPrice) {
+    priceFilter.$lte = Number(req.query.maxPrice);
+  }
+  const ratingFilter = req.query.rating ? { rating: { $gte: Number(req.query.rating) } } : {};
 
-  const count = await Product.countDocuments({ ...keyword });
-  const products = await Product.find({ ...keyword })
+  const filter = {
+    ...keyword,
+    ...categoryFilter,
+    ...(Object.keys(priceFilter).length ? { price: priceFilter } : {}),
+    ...ratingFilter
+  };
+
+  const sortOptions: Record<string, any> = {
+    'price-asc': { price: 1 },
+    'price-desc': { price: -1 },
+    newest: { createdAt: -1 },
+    rating: { rating: -1 }
+  };
+  const sort = sortOptions[req.query.sort as string] || { createdAt: -1 };
+
+  const count = await Product.countDocuments(filter);
+  const products = await Product.find(filter)
+    .sort(sort)
     .limit(pageSize)
     .skip(pageSize * (page - 1))
     .populate('category', 'name');
@@ -41,7 +68,7 @@ export const createProduct = async (req: any, res: any) => {
     name,
     slug: name.toLowerCase().replace(/ /g, '-'),
     price,
-    user: req.user._id,
+    createdBy: req.user._id,
     images,
     category,
     stock,
