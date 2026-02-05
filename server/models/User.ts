@@ -10,6 +10,10 @@ export interface IUser extends Document {
   avatar?: string;
   isBlocked: boolean;
   isVerified: boolean;
+  emailVerificationToken?: string;
+  emailVerificationExpires?: Date;
+  resetPasswordToken?: string;
+  resetPasswordExpires?: Date;
   address?: {
     street: string;
     city: string;
@@ -29,6 +33,10 @@ const UserSchema: Schema = new Schema({
   avatar: { type: String },
   isBlocked: { type: Boolean, default: false },
   isVerified: { type: Boolean, default: false },
+  emailVerificationToken: { type: String },
+  emailVerificationExpires: { type: Date },
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
   address: {
     street: String,
     city: String,
