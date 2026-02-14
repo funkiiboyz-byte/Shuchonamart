@@ -1,41 +1,314 @@
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ShuchonaMart | Quality Marketplace</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Shuchona ❤️</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
     <style>
-      body { font-family: 'Inter', sans-serif; }
-      /* Custom scrollbar */
-      ::-webkit-scrollbar { width: 6px; }
-      ::-webkit-scrollbar-track { background: #f1f1f1; }
-      ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-      ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        /* --- CORE VARIABLES --- */
+        :root {
+            --primary: #ff2e63;
+            --accent: #ffd700;
+            --bg-dark: #0f050a;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        /* --- RESET & BASE --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 46, 99, 0.15) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(100, 20, 50, 0.15) 0%, transparent 20%);
+            min-height: 100vh;
+        }
+
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+
+        /* --- INTRO OVERLAY --- */
+        #intro-overlay {
+            position: fixed; inset: 0;
+            background: #000; z-index: 10000;
+            display: flex; flex-direction: column; 
+            justify-content: center; align-items: center;
+            transition: opacity 1s ease;
+        }
+        
+        .intro-title {
+            font-size: clamp(2rem, 8vw, 3.5rem);
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, var(--primary), #ffccd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulse 2s infinite;
+        }
+
+        .enter-btn {
+            padding: 15px 50px;
+            font-size: 1.2rem;
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 0 15px rgba(255, 46, 99, 0.4);
+        }
+        
+        .enter-btn:hover {
+            background: var(--primary);
+            transform: scale(1.1);
+        }
+
+        /* --- MAIN CONTENT --- */
+        #main-wrapper {
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center;
+            position: relative;
+            padding: 20px;
+        }
+
+        .hero-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(15,5,10,0.5), var(--bg-dark)),
+                        url('https://pub-8358ca32a5f94ba09e3d058ef0799037.r2.dev/l.o.v.e/1676808068000.jpg');
+            background-size: cover; background-position: center;
+            opacity: 0.4; z-index: -1;
+            filter: blur(2px);
+        }
+
+        .hero-content h1 {
+            font-size: clamp(2.5rem, 10vw, 4.5rem);
+            background: linear-gradient(45deg, #fff, #ffccd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        /* --- TIMER --- */
+        .timer-box {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        .time-unit {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 12px;
+            border-radius: 12px;
+            min-width: 75px;
+            transition: transform 0.3s ease;
+        }
+        .time-unit:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .time-unit span { display: block; font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+        .time-unit p { font-size: 0.7rem; opacity: 0.7; text-transform: uppercase; }
+
+        /* --- MASONRY GALLERY (Mobile Optimized) --- */
+        .gallery-section { padding: 50px 15px; max-width: 1200px; margin: 0 auto; }
+        .masonry { 
+            column-count: 3; 
+            column-gap: 15px; 
+        }
+        .masonry-item {
+            break-inside: avoid; margin-bottom: 15px; position: relative;
+            border-radius: 15px; overflow: hidden;
+            opacity: 0; transform: translateY(20px); transition: all 0.6s ease;
+        }
+        .masonry-item.visible { opacity: 1; transform: translateY(0); }
+        .masonry-item img { width: 100%; display: block; transition: 0.5s; }
+
+        /* --- MUSIC PLAYER --- */
+        .music-player {
+            position: fixed; bottom: 20px; right: 20px;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(10px);
+            border: 1px solid var(--primary);
+            width: 45px; height: 45px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; z-index: 999;
+            transition: all 0.4s ease; overflow: hidden;
+        }
+        .music-player.expanded { width: 140px; border-radius: 30px; }
+        .music-text { white-space: nowrap; font-size: 0.8rem; display: none; margin-left: 8px; }
+        .music-player.expanded .music-text { display: block; }
+
+        /* --- ANIMATIONS --- */
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .playing-anim { animation: spin 4s linear infinite; }
+
+        /* --- MOBILE RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .masonry { column-count: 2; }
+            .time-unit { min-width: 65px; padding: 8px; }
+            .time-unit span { font-size: 1.2rem; }
+            .glass-card { padding: 40px 20px; }
+        }
+        @media (max-width: 480px) {
+            .masonry { column-count: 1; }
+            .hero-content h1 { font-size: 2.8rem; }
+        }
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
-    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
-    "@google/genai": "https://esm.sh/@google/genai@^1.37.0",
-    "zustand/": "https://esm.sh/zustand@^5.0.10/",
-    "zustand": "https://esm.sh/zustand@^5.0.10",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "mongoose": "https://esm.sh/mongoose@^9.1.4",
-    "dotenv": "https://esm.sh/dotenv@^17.2.3",
-    "express": "https://esm.sh/express@^5.2.1",
-    "cors": "https://esm.sh/cors@^2.8.5",
-    "jsonwebtoken": "https://esm.sh/jsonwebtoken@^9.0.3",
-    "bcryptjs": "https://esm.sh/bcryptjs@^3.0.3"
-  }
-}
-</script>
 </head>
-  <body class="bg-gray-50 text-gray-900">
-    <div id="root"></div>
-  </body>
+<body>
+
+    <div id="intro-overlay">
+        <h1 class="intro-title">For Shuchona ❤️</h1>
+        <button class="enter-btn" id="enter-btn">Enter My Heart</button>
+    </div>
+
+    <audio id="bg-music" loop>
+        <source src="https://pub-8358ca32a5f94ba09e3d058ef0799037.r2.dev/megaprep/Ziv%20Moran%20-%20Sweet%20Slumber.mp3" type="audio/mpeg">
+    </audio>
+
+    <main id="main-wrapper">
+        <div class="music-player" id="music-toggle">
+            <div class="music-icon playing-anim">🎵</div>
+            <div class="music-text">Playing...</div>
+        </div>
+
+        <section class="hero">
+            <div class="hero-bg"></div>
+            <div class="hero-content">
+                <div class="typewriter" id="typewriter-text" style="min-height: 24px; color: var(--primary); letter-spacing: 2px;"></div>
+                <h1>Shuchona</h1>
+                <p style="opacity: 0.8;">You are my favorite feeling.</p>
+                
+                <div class="timer-box">
+                    <div class="time-unit"><span id="days">0</span><p>Days</p></div>
+                    <div class="time-unit"><span id="hours">0</span><p>Hours</p></div>
+                    <div class="time-unit"><span id="minutes">0</span><p>Mins</p></div>
+                    <div class="time-unit" style="border-color: var(--primary);"><span id="seconds">0</span><p>Secs</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="message-section" style="padding: 100px 20px; display: flex; justify-content: center;">
+            <div class="glass-card scroll-reveal" style="background: rgba(255,255,255,0.03); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); padding: 50px 30px; border-radius: 24px; max-width: 700px; text-align: center;">
+                <h2 style="color: var(--primary); margin-bottom: 15px;">My Dear,</h2>
+                <p style="font-style: italic; color: #ff8fa3; margin-bottom: 20px;">"In a sea of people, my eyes will always search for you."</p>
+                <p style="line-height: 1.6; opacity: 0.9; margin-bottom: 25px;">I don't need the whole world to love me, I just need you. Every photo below holds a memory I want to keep forever.</p>
+                <button class="enter-btn" id="read-letter-btn" style="font-size: 1rem; padding: 12px 35px;">Open Letter</button>
+            </div>
+        </section>
+
+        <section class="gallery-section">
+            <h2 style="text-align: center; font-size: 2rem; margin-bottom: 40px;">Our Moments</h2>
+            <div class="masonry" id="gallery-container"></div>
+        </section>
+    </main>
+
+    <div class="modal" id="letter-modal" style="position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:20000; display:none; align-items:center; justify-content:center; padding: 20px;">
+        <div style="background: #1a0b10; padding: 40px 30px; border-radius: 20px; border: 1px solid var(--primary); max-width: 500px; width: 100%; text-align: center; position: relative;">
+            <span id="close-letter" style="position: absolute; top: 15px; right: 20px; font-size: 2rem; cursor: pointer;">&times;</span>
+            <h2 style="color: var(--primary); margin-bottom: 20px;">To Someone Special</h2>
+            <p style="line-height: 1.8; color: #ddd; white-space: pre-line;">
+                From the moment you walked into my life, everything changed for the better. Your smile is my daily inspiration, and your voice is my favorite melody.
+
+                I created this little space just to show you how much you mean to me.
+
+                I miss You. Forever & Always.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const START_DATE = "2023-10-05T00:00:00"; 
+        const images = [
+            { src: 'https://pub-8358ca32a5f94ba09e3d058ef0799037.r2.dev/l.o.v.e/1676808068000.jpg', cap: 'The First Photo' },
+            { src: 'https://pub-8358ca32a5f94ba09e3d058ef0799037.r2.dev/l.o.v.e/received_489199320006695.jpeg', cap: 'Your Smile' },
+            { src: 'https://pub-8358ca32a5f94ba09e3d058ef0799037.r2.dev/l.o.v.e/received_1441110566421152.jpeg', cap: 'Winter Days' },
+            { src: 'https://pub-8358ca32a5f94ba09e3d058ef0799037.r2.dev/l.o.v.e/received_556049726383545.jpeg', cap: 'Peace' },
+            { src: 'https://pub-8358ca32a5f94ba09e3d058ef0799037.r2.dev/l.o.v.e/1676799088696.jpg', cap: 'Favorite One' },
+            { src: 'https://pub-8358ca32a5f94ba09e3d058ef0799037.r2.dev/l.o.v.e/1669101940542.jpg', cap: 'Stunning' }
+        ];
+
+        // Enter App
+        document.getElementById('enter-btn').addEventListener('click', () => {
+            const music = document.getElementById('bg-music');
+            music.play();
+            document.getElementById('intro-overlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('intro-overlay').style.display = 'none';
+                document.getElementById('main-wrapper').style.opacity = '1';
+                typeWriter("HELLO BEAUTIFUL...", "typewriter-text");
+            }, 800);
+        });
+
+        // Music Toggle
+        const musicToggle = document.getElementById('music-toggle');
+        const music = document.getElementById('bg-music');
+        musicToggle.addEventListener('click', () => {
+            musicToggle.classList.toggle('expanded');
+            if(music.paused) {
+                music.play();
+                musicToggle.querySelector('.music-icon').classList.add('playing-anim');
+                musicToggle.querySelector('.music-text').textContent = "Playing...";
+            } else {
+                music.pause();
+                musicToggle.querySelector('.music-icon').classList.remove('playing-anim');
+                musicToggle.querySelector('.music-text').textContent = "Paused";
+            }
+        });
+
+        // Timer
+        setInterval(() => {
+            const diff = new Date() - new Date(START_DATE);
+            document.getElementById('days').innerText = Math.floor(diff / (1000*60*60*24));
+            document.getElementById('hours').innerText = Math.floor((diff / (1000*60*60)) % 24);
+            document.getElementById('minutes').innerText = Math.floor((diff / 1000 / 60) % 60);
+            document.getElementById('seconds').innerText = Math.floor((diff / 1000) % 60);
+        }, 1000);
+
+        // Typewriter
+        function typeWriter(text, id) {
+            let i = 0;
+            const el = document.getElementById(id);
+            function type() {
+                if (i < text.length) { el.innerHTML += text.charAt(i); i++; setTimeout(type, 150); }
+            }
+            type();
+        }
+
+        // Gallery
+        const container = document.getElementById('gallery-container');
+        images.forEach(img => {
+            const div = document.createElement('div');
+            div.className = 'masonry-item scroll-reveal';
+            div.innerHTML = `<img src="${img.src}"><div style="padding:10px; font-size:0.8rem; text-align:center; opacity:0.7;">${img.cap}</div>`;
+            container.appendChild(div);
+        });
+
+        // Scroll Reveal
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+
+        // Letter Modal
+        document.getElementById('read-letter-btn').onclick = () => document.getElementById('letter-modal').style.display = 'flex';
+        document.getElementById('close-letter').onclick = () => document.getElementById('letter-modal').style.display = 'none';
+    </script>
+</body>
 </html>
