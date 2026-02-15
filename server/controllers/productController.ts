@@ -35,19 +35,26 @@ export const getProductById = async (req: any, res: any) => {
 
 // Fix: Use 'any' for req and res to resolve property access issues with body, status, and json
 export const createProduct = async (req: any, res: any) => {
-  const { name, price, description, images, category, stock, sku } = req.body;
+  const { name, price, description, images, category, stock, sku, discountPrice, isFeatured, status } = req.body;
+
+  if (!name || price === undefined || !description || !category || !sku) {
+    return res.status(400).json({ message: 'Name, price, description, category, and SKU are required.' });
+  }
 
   const product = new Product({
     name,
     slug: name.toLowerCase().replace(/ /g, '-'),
     price,
-    user: req.user._id,
+    discountPrice,
+    createdBy: req.user?._id,
     images,
     category,
     stock,
     sku,
     description,
-    numReviews: 0
+    numReviews: 0,
+    isFeatured,
+    status
   });
 
   const createdProduct = await product.save();
@@ -56,17 +63,19 @@ export const createProduct = async (req: any, res: any) => {
 
 // Fix: Use 'any' for req and res to resolve property access issues with params, body, status, and json
 export const updateProduct = async (req: any, res: any) => {
-  const { name, price, description, images, category, stock, status } = req.body;
+  const { name, price, description, images, category, stock, status, discountPrice, isFeatured } = req.body;
   const product = await Product.findById(req.params.id);
 
   if (product) {
     product.name = name || product.name;
     product.price = price || product.price;
+    product.discountPrice = discountPrice ?? product.discountPrice;
     product.description = description || product.description;
     product.images = images || product.images;
     product.category = category || product.category;
     product.stock = stock || product.stock;
     product.status = status || product.status;
+    product.isFeatured = isFeatured ?? product.isFeatured;
 
     const updatedProduct = await product.save();
     res.json(updatedProduct);
